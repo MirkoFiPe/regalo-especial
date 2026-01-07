@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>¡Feliz Cumpleaños!</title>
+    <style> 
+        body { margin: 0; overflow: hidden; background: #000; } 
+        #mensaje {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 24px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="mensaje">¡Usa el mouse para girar el pastel! 🎂</div>
+    <script type="module">
+        import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+        import { OrbitControls } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/controls/OrbitControls.js';
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Grupo para el pastel
+        const cakeGroup = new THREE.Group();
+        scene.add(cakeGroup);
+
+        // Base del pastel (Pan)
+        const cakeGeom = new THREE.CylinderGeometry(2, 2, 1.5, 32);
+        const cakeMat = new THREE.MeshPhongMaterial({ color: 0xff69b4 }); // Rosa
+        const cakeBase = new THREE.Mesh(cakeGeom, cakeMat);
+        cakeGroup.add(cakeBase);
+
+        // Cobertura (Chantilly arriba)
+        const icingGeom = new THREE.CylinderGeometry(2.1, 2.1, 0.4, 32);
+        const icingMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
+        const icing = new THREE.Mesh(icingGeom, icingMat);
+        icing.position.y = 0.6;
+        cakeGroup.add(icing);
+
+        // Vela
+        const candleGeom = new THREE.CylinderGeometry(0.1, 0.1, 0.8, 16);
+        const candleMat = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+        const candle = new THREE.Mesh(candleGeom, candleMat);
+        candle.position.y = 1.2;
+        cakeGroup.add(candle);
+
+        // Llama de la vela
+        const flameGeom = new THREE.SphereGeometry(0.15, 8, 8);
+        const flameMat = new THREE.MeshBasicMaterial({ color: 0xffa500 });
+        const flame = new THREE.Mesh(flameGeom, flameMat);
+        flame.position.y = 1.7;
+        cakeGroup.add(flame);
+
+        // Luces
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(10, 10, 10);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0x404040));
+
+        camera.position.z = 6;
+        const controls = new OrbitControls(camera, renderer.domElement);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            cakeGroup.rotation.y += 0.01;
+            // Animación de la llama
+            flame.scale.set(1, 1 + Math.sin(Date.now() * 0.01) * 0.2, 1);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
